@@ -1,3 +1,4 @@
+
 <?php
 class DbConnection{
 	private static $DbInstance = null;
