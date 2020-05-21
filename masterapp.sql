@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS `etudiant` (
   `statut` enum('Inscris','Candidat') NOT NULL,
   PRIMARY KEY (`ID`),
   FOREIGN KEY (`specialite`) REFERENCES stage(`ID`),
+  CONSTRAINT `CHK_Unique_Nom_Prenom_Datenaissance` UNIQUE (`nom`, `prenom`, `date_naissance`),
   CONSTRAINT `CHK_Nom_Prenom_Len` CHECK (LENGTH(`nom`) >= 3 AND LENGTH(`prenom`)>=3),
   CONSTRAINT `CHK_Note_Maths` CHECK (`note_maths`>10),
   CONSTRAINT `CHK_Note_Info` CHECK (`note_info`>15),

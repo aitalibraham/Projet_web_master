@@ -12,6 +12,7 @@ class DbConnection{
 		if(self::$DbInstance == null){
 			try{
 				self::$DbInstance = new PDO('mysql:host='.self::$host.'; dbname='.self::$dbname.'', self::$username, self::$pw);
+				self::$DbInstance->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			}catch (PDOException $e) {
 				print "Erreur !: " . $e->getMessage() . "<br/>";
 				die();
