@@ -2,6 +2,9 @@
 require 'db.php';
 
 class NafOrm{
+
+	private function __construct(){}
+
 	
 	public static function insert($object){
 		
@@ -21,11 +24,18 @@ class NafOrm{
 		
 		
 		$sql = "INSERT INTO ".$table." (".$champs.") VALUES (".$valeurs.")";
-		print_r ($data);
-		$stmt= DbConnection::getConnection()->prepare($sql);
-		$stmt->execute($data);
-		$object->setID(DbConnection::getConnection()->lastInsertId());
-		return true;
+		
+		try{
+			$stmt= DbConnection::getConnection()->prepare($sql);
+			$stmt->execute($data);
+			$object->setID(DbConnection::getConnection()->lastInsertId());
+			return true;
+		}catch(Exception $e) {
+			echo $e->getMessage();
+			return false;
+		}
+		
+		
 	}
 	
 	public static function update($object){
@@ -44,9 +54,14 @@ class NafOrm{
 
 		
 		$sql = "UPDATE ".$table." SET ".$update." WHERE ID=:ID";
-		$stmt= DbConnection::getConnection()->prepare($sql);
-		$stmt->execute($data);
-		return true;
+		try{
+			$stmt= DbConnection::getConnection()->prepare($sql);
+			$stmt->execute($data);
+			return true;
+		}catch(Exception $e) {
+			echo $e->getMessage()."\n";
+			return false;
+		}
 	}
 	
 	public static function del($object){
@@ -65,13 +80,23 @@ class NafOrm{
 
 		
 		$sql = "DELETE FROM ".$table." WHERE ID=:ID";
-		$stmt= DbConnection::getConnection()->prepare($sql);
-		$stmt->execute($data);
-		return true;
+		try{
+			$stmt= DbConnection::getConnection()->prepare($sql);
+			$stmt->execute($data);
+			return true;
+		}catch(Exception $e) {
+			echo $e->getMessage()."\n";
+			return false;
+		}
 	}
 
 	public static function selectAll($table){
-		return DbConnection::getConnection()->query("SELECT * FROM ".$table)->fetchAll();
+		try{
+			return DbConnection::getConnection()->query("SELECT * FROM ".$table)->fetchAll();
+		}catch(Exception $e) {
+			echo $e->getMessage()."\n";
+			return false;
+		}
 	}
 	
 	public static function selectWithCondition($table, $condition){
@@ -79,22 +104,22 @@ class NafOrm{
 		$searchcondition = "";
 		
 		foreach(array_keys($condition) as $attribute){
-			$searchcondition .= $attribute."=:".$attribute.", ";
+			$searchcondition .= $attribute."=:".$attribute." AND ";
 		}
 		
-		$searchcondition = substr_replace($searchcondition ,"", -2);
+		$searchcondition = substr_replace($searchcondition ,"", -4);
 		
 		$sql = "SELECT * FROM ".$table." WHERE ".$searchcondition;
-		$stmt = DbConnection::getConnection()->prepare($sql);
-		$stmt->execute($condition);
 		
-		return $stmt->fetchAll();
+		try{
+			$stmt = DbConnection::getConnection()->prepare($sql);
+			$stmt->execute($condition);
+			return $stmt->fetchAll();
+		}catch(Exception $e) {
+			echo $e->getMessage()."\n";
+			return false;
+		}
 	}
 }
-class Stage{
-	private $domaine;
-	
-}
-
 
 ?>
